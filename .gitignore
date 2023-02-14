@@ -4,3 +4,5 @@ mlruns/
 models/
 functions/__pycache__
 TaxiFareModel/__pycache__
+**/.ipynb_checkpoints/
+**/mlruns/
