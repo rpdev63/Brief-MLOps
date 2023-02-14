@@ -1,0 +1,6 @@
+data/
+env/
+mlruns/
+models/
+functions/__pycache__
+TaxiFareModel/__pycache__
