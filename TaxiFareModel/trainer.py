@@ -1,6 +1,7 @@
 import os
 import joblib
-from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.model_selection import cross_validate, train_test_split, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -21,6 +22,8 @@ class Trainer:
         self.set_pipeline(model)
         self.experiment_name = experiment_name
         self.mlflow_client = MlflowClient()
+        
+
 
     def set_pipeline(self, model):
         '''returns a pipelined model'''
@@ -32,7 +35,6 @@ class Trainer:
             ('time_enc', TimeFeaturesEncoder('pickup_datetime')),
             ("ohe", OneHotEncoder(handle_unknown='ignore'))
         ])
-
         self.pipe = Pipeline([
             ('features', ColumnTransformer(transformers=[
                 ('distance', dist_pipe, [
@@ -47,11 +49,16 @@ class Trainer:
 
     def evaluate(self):
         '''returns the value of the RMSE'''
-        # A COMPLETER
-        y_pred = self.pipe.predict(self.X_test)
-        rmse = compute_rmse(y_pred, self.y_test)
-        print(rmse)
-        return rmse
+         # compute the cross-validation scores for the pipeline
+        scoring = ['neg_mean_squared_error', 'r2']        
+        scores = cross_validate(self.pipe, self.X, self.y, cv=5, scoring=scoring)
+        mse = -scores['test_neg_mean_squared_error'].mean()
+        rmse =np.sqrt(mse)
+        r2_score = scores['test_r2'].mean()
+        print(f"MSE : {round(mse,3)}\tRMSE : {round(rmse,3)}\t r2 score:{round(r2_score,3)}")
+        # y_pred = self.pipe.predict(self.X_test)
+        # rmse = compute_rmse(y_pred, self.y_test)
+        return mse, rmse, r2_score
 
     def fit(self, X, y):
         self.pipe.fit(X, y)
