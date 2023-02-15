@@ -4,12 +4,10 @@
 
 1 ) Cloner le repo git :    
 
- git@github.com:rpdev63/Brief-MLOps.git
-  
-  cd Brief-MLOps/
+https://github.com/rpdev63/Brief-MLOps.git  
 
 2 ) Créer un environnement virtuel 
-
+  cd Brief-MLOps/
   python -m venv env
   
 3 ) Activer l'environnement virtuel
